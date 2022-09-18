@@ -1,3 +1,8 @@
+/**
+ * Activity:
+ * https://www.codewars.com/kata/526571aae218b8ee490006f4
+ */
+
 var countBits = function (n) {
     var b = 0
 
@@ -12,5 +17,5 @@ var countBits = function (n) {
     return b
 };
 
-// Shows the count of every single 1 in binary of a decimal number
+// Shows the count of every single 1 in binary of a decimal number.
 console.log(countBits(398475))

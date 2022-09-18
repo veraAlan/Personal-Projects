@@ -1,4 +1,9 @@
-String.prototype.toCamelString = function () {
+/**
+ * Activity:
+ * https://www.codewars.com/kata/5390bac347d09b7da40006f6
+ */
+
+String.prototype.toJadenCase = function () {
     var words = this.split(' ')
 
     words.forEach(function (word, index) {
@@ -9,4 +14,4 @@ String.prototype.toCamelString = function () {
 };
 
 var str = "A phrase that has some words."
-console.log(str.toCamelString())
+console.log(str.toJadenCase())
