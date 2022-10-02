@@ -8,15 +8,16 @@ void fibonacci(int fnCount)
     cout << prevNum;
     if (fnCount > 0)
     {
-        cout << "\n";
+        cout << endl;
         cout << nextNum;
         for (int i = 1; i < fnCount; i++)
         {
-            cout << "\n";
+            cout << endl;
             cout << (prevNum + nextNum);
             prevNum > nextNum ? nextNum += prevNum : prevNum += nextNum;
         }
     }
+    cout << endl;
 }
 
 int main()
