@@ -10,18 +10,35 @@ void longFibonacci(int fnCount)
     if (fnCount > 0)
     {
         cout << "1. " << nextNum << endl;
-        for (int i = 1; i < fnCount - 1; i++)
+        for (int i = 2; i < fnCount; i++)
         {
             if (prevNum.length() < 18 || nextNum.length() < 18)
             {
                 int unsigned long long longPrev = stoull(prevNum, nullptr, 10);
                 int unsigned long long longNext = stoull(nextNum, nullptr, 10);
+                unsigned long long result = longPrev + longNext;
 
-                cout << i + 2 << ". " << (longPrev + longNext) << endl;
-                longPrev > longNext ? nextNum = to_string(longNext + longPrev) : prevNum = to_string(longPrev + longNext);
+                cout << i << ". " << result << endl;
+                prevNum = to_string(longNext);
+                nextNum = to_string(result);
             }
             else
             {
+                pmax = (int)(prevNum.length() / 18);
+                amax = (int)(nextNum.length() / 18);
+
+                pmod = prevNum.length() % 18;
+                amod = nextNum.length() % 18;
+
+                string prevULLs[] = new prevULLs[pmax];
+                string actualULLs[] = new actualULLs[amax];
+
+                // TODO Load array depending on pmod and pmax,
+                for (int i = 0; i < pmax; i++)
+                {
+                    prevULLs[i] = prevNum.split();
+                }
+
                 // TODO attempt to add digits in groups of 18 dynamically.
                 int unsigned long long lprev1, lprev2, lnext1, lnext2;
                 int prevLength = prevNum.length(), nextLength = nextNum.length();
@@ -53,7 +70,7 @@ void longFibonacci(int fnCount)
                 else
                 {
                     longNext[0] = nextNum.substr(0, nextLength - 18);
-                    longNext[1] = nextNum.substr(nextLength - 18, 18);
+                    longNext[1] = nextNum.substr(nextLength - 18, 18); // Result of 0 + 17 doesnt sum up well enough
                     lnext1 = stoull(longNext[0], nullptr, 10);
                     lnext2 = stoull(longNext[1], nullptr, 10);
                 }
@@ -81,7 +98,7 @@ void longFibonacci(int fnCount)
                     }
                 }
 
-                cout << i + 2 << ". " << result << endl;
+                cout << i << ". " << result << endl;
 
                 // Change smaller number to new result of sum.
                 if (lprev1 == lnext1)
