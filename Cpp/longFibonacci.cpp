@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <math.h>
 using namespace std;
 
@@ -10,7 +11,7 @@ void longFibonacci(int fnCount)
     if (fnCount > 0)
     {
         cout << "1. " << nextNum << endl;
-        for (int i = 2; i < fnCount; i++)
+        for (int i = 2; i < fnCount + 1; i++)
         {
             if (prevNum.length() < 18 || nextNum.length() < 18)
             {
@@ -24,98 +25,64 @@ void longFibonacci(int fnCount)
             }
             else
             {
-                pmax = (int)(prevNum.length() / 18);
-                amax = (int)(nextNum.length() / 18);
+                int maxDigits = nextNum.length() / 18;
+                int mod = nextNum.length() % 18;
+                int index;
 
-                pmod = prevNum.length() % 18;
-                amod = nextNum.length() % 18;
-
-                string prevULLs[] = new prevULLs[pmax];
-                string actualULLs[] = new actualULLs[amax];
-
-                // TODO Load array depending on pmod and pmax,
-                for (int i = 0; i < pmax; i++)
+                // If there is 1 less digit in prevNum, add a 0 to first position.
+                if (prevNum.length() % 18 != mod)
                 {
-                    prevULLs[i] = prevNum.split();
+                    prevNum = "0" + prevNum;
                 }
 
-                // TODO attempt to add digits in groups of 18 dynamically.
-                int unsigned long long lprev1, lprev2, lnext1, lnext2;
-                int prevLength = prevNum.length(), nextLength = nextNum.length();
-                string longPrev[2], longNext[2], result;
+                // Create pointers for arrays with max needed size.
+                string *prevULLs = new string[maxDigits + (mod != 0)];
+                string *actualULLs = new string[maxDigits + (mod != 0)];
+                string result = "";
 
-                // Set variables for 18 and up digits
-                if (prevLength == 18)
+                // Load first digits in groups of 18.
+                for (index = 0; index < maxDigits; index++)
                 {
-                    longPrev[0] = "0";
-                    longPrev[1] = prevNum.substr(0, 18);
-                    lprev1 = 0;
-                    lprev2 = stoull(longPrev[1], nullptr, 10);
-                }
-                else
-                {
-                    longPrev[0] = prevNum.substr(0, prevLength - 18);
-                    longPrev[1] = prevNum.substr(prevLength - 18, 18);
-                    lprev1 = stoull(longPrev[0], nullptr, 10);
-                    lprev2 = stoull(longPrev[1], nullptr, 10);
+                    prevULLs[index] = prevNum.substr(index * 18, 18);
+                    actualULLs[index] = nextNum.substr(index * 18, 18);
                 }
 
-                if (nextLength == 18)
+                // Add last group of digits.
+                if (mod != 0)
                 {
-                    longNext[0] = "0";
-                    longNext[1] = nextNum.substr(0, 18);
-                    lnext1 = 0;
-                    lnext2 = stoull(longNext[1], nullptr, 10);
-                }
-                else
-                {
-                    longNext[0] = nextNum.substr(0, nextLength - 18);
-                    longNext[1] = nextNum.substr(nextLength - 18, 18); // Result of 0 + 17 doesnt sum up well enough
-                    lnext1 = stoull(longNext[0], nullptr, 10);
-                    lnext2 = stoull(longNext[1], nullptr, 10);
+                    prevULLs[index] = prevNum.substr(index * 18, mod);
+                    actualULLs[index] = nextNum.substr(index * 18, mod);
                 }
 
-                /*
-                Add digits. If adding first digits of both numbers (left side digits)
-                and the result is over 18 digits split that result.
-                on the contrary sum each numbers
-                */
-                if (to_string(lprev2 + lnext2).length() == 19)
+                // Use auxResult to add values for each group and determine if there is a carryout for next group to be added.
+                string auxResult = "";
+                int carryout = 0;
+                for (index = maxDigits + (mod != 0) - 1; index >= 0; index--)
                 {
-                    result = to_string(lprev1 + lnext1 + 1);
-                    result += to_string(lprev2 + lnext2).substr(1, 18);
-                }
-                else
-                {
-                    result = to_string(lprev1 + lnext1);
-                    if (result != "0")
+                    // Add using max unsigned long long value, without overflowing.
+                    auxResult = to_string(stoull(prevULLs[index]) + stoull(actualULLs[index]) + carryout);
+                    carryout = 0;
+                    if (index != 0)
                     {
-                        result += to_string(lprev2 + lnext2);
+                        // Check if there's a carry out (Doesn't check for last sum, since its the last group and first digits)
+                        if (auxResult.length() > actualULLs[index].length())
+                        {
+                            carryout = stoi(auxResult.substr(0, 1));
+                            auxResult = auxResult.substr(1);
+                        }
+                        // Check if there's a zero between this group and next one.
+                        if (auxResult.length() < actualULLs[index].length())
+                        {
+                            auxResult = "0" + auxResult;
+                        }
                     }
-                    else
-                    {
-                        result = to_string(lprev2 + lnext2);
-                    }
+
+                    result = auxResult + result;
                 }
 
                 cout << i << ". " << result << endl;
-
-                // Change smaller number to new result of sum.
-                if (lprev1 == lnext1)
-                {
-                    if (lprev2 > lnext2)
-                    {
-                        nextNum = result;
-                    }
-                    else
-                    {
-                        prevNum = result;
-                    }
-                }
-                else
-                {
-                    lprev1 > lnext1 ? nextNum = result : prevNum = result;
-                }
+                prevNum = nextNum;
+                nextNum = result;
             }
         }
     }
@@ -124,7 +91,7 @@ void longFibonacci(int fnCount)
 int main()
 {
     int count;
-    cout << "How many numbers of the Fibonacci sequence do you want? (up to 139 for now) : ";
+    cout << "How many numbers of the Fibonacci sequence do you want? (There's no limit now ;) ) : ";
     cin >> count;
     cout << endl;
 
